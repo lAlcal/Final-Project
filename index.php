@@ -242,26 +242,42 @@ session_start();
   
               <div class="row">
                   <div class="col-md-6 col-md-offset-3">
-                      <form id="contact">
+                      <form id="contact" method="POST" action="<?php $_SERVER['PHP_SELF'];?>">
                         <div class="form-group">
-                          <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter Name">
+                          <input type="text" class="form-control" name="nome" id="exampleInputEmail1" placeholder="Enter Name">
                         </div>
                         <div class="form-group">
-                          <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Enter Email">
+                          <input type="email" class="form-control" name="email" id="exampleInputPassword1" placeholder="Enter Email">
                         </div>
                         <div class="form-group">
-                          <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter Website">
+                          <input type="text" class="form-control" name="oggetto" id="exampleInputEmail1" placeholder="Enter Subject">
                         </div>
                         <div class="form-group">
-                          <textarea class="form-control" rows="4" placeholder="Message"></textarea>
+                          <textarea class="form-control" name="msg" rows="4" placeholder="Message"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary my-btn dark">Submit</button>
+                                <?php
+
+                                if(isset($_POST['contact']))
+                                {
+                                    $nome=$_POST['nome'];
+                                    $email=$_POST['email'];
+                                    $obj=$_POST['oggetto'];
+                                    $msg=$_POST['msg'];
+
+                                }
+
+                                ?>
+                        <button type="submit" class="btn btn-primary my-btn dark" name="contact">Submit</button>
                       </form>
                   </div>
               </div>
           </div>
       </div>
+  <!--
+    Parte per acquisire informazioni inserite nella forma e contattare l'azienda.
+    -->
   
+     
       <nav id="tf-footer">
           <div class="container">
                <div class="pull-left">
