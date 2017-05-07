@@ -151,35 +151,27 @@ session_start();
               </div>
   
               <div class="space"></div>
-  
-              <div class="row">
-                  <div class="col-md-4">
-                      <img src="img/09.jpg" class="img-responsive">
-                  </div>
-  
-                  <div class="col-md-4">
-                      <img src="img/02.jpg" class="img-responsive">
-                  </div>
-  
-                  <div class="col-md-4">
-                      <img src="img/03.jpg" class="img-responsive">
-                  </div>
-              </div>
-  
-              <div class="row toppadding">
-                  <div class="col-md-4">
-                      <img src="img/04.jpg" class="img-responsive">
-                  </div>
-  
-                  <div class="col-md-4">
-                      <img src="img/05.jpg" class="img-responsive">
-                  </div>
-  
-                  <div class="col-md-4">
-                      <img src="img/06.jpg" class="img-responsive">
-                  </div>
-              </div>
-  
+              <?php
+                            
+              if(!isset($_SESSION['username']) AND !isset($_SESSION['password']))
+              {
+                  echo '<div class="row"><div class="col-md-4"><img src="img/09.jpg" class="img-responsive"></div><div class="col-md-4"><img src="img/02.jpg" class="img-responsive"></div><div class="col-md-4"><img src="img/03.jpg" class="img-responsive"></div></div><div class="row toppadding">
+                  <div class="col-md-4"><img src="img/04.jpg" class="img-responsive">
+                  </div><div class="col-md-4"><img src="img/05.jpg" class="img-responsive">
+                  </div><div class="col-md-4"><img src="img/06.jpg" class="img-responsive">
+                  </div></div>';
+              }
+              ?>
+              <div id="googleMap" style="width:100%;height:400px;"></div>
+              <script>
+                  function myMap() 
+                  {
+                      var mapProp= {center:new google.maps.LatLng(51.508742,-0.120850),
+                          zoom:5,};
+                      var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+                  }
+              </script>
+              <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB0eUzC_no58hHDQ2rf2QIYDZOcWXflmAk&callback=myMap"></script>
           </div>
       </div>
   
