@@ -259,10 +259,10 @@ session_start();
 
                                 if(isset($_POST['contact']))
                                 {
-                                    $nome=$_POST['nome'];
+                                   /* $nome=$_POST['nome'];
                                     $email=$_POST['email'];
                                     $obj=$_POST['oggetto'];
-                                    $msg=$_POST['msg'];
+                                    $msg=$_POST['msg'];*/
 
                                 }
 
