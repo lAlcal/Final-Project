@@ -161,6 +161,8 @@ session_start();
                   </div><div class="col-md-4"><img src="img/06.jpg" class="img-responsive">
                   </div></div>';
               }
+              else
+              {
               ?>
               <div id="googleMap" style="width:100%;height:400px;"></div>
               <script>
@@ -172,6 +174,9 @@ session_start();
                   }
               </script>
               <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB0eUzC_no58hHDQ2rf2QIYDZOcWXflmAk&callback=myMap"></script>
+              <?php
+              }
+              ?>
           </div>
       </div>
   
