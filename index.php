@@ -85,11 +85,16 @@ session_start();
   
               <div class="container">
                   <div class="content">
-                      <h1>We create systems</h1>
-                      <h3>that communicates and connect people</h3>
-                      <br>
-                      <a href="#tf-contact" class="btn btn-primary my-btn">Contact</a>
-                      <a href="#tf-portfolio" class="btn btn-primary my-btn2">Portfolio</a>
+                      <?php
+                      if(!isset($_SESSION['username']) AND !isset($_SESSION['password']))
+                      {
+                          echo '<h1>We create systems</h1><h3>that communicates and connect people</h3><br><a href="#tf-contact" class="btn btn-primary my-btn">Contattaci</a><a href="#tf-portfolio" class="btn btn-primary my-btn2">Portfolio</a>';
+                      }
+                      else
+                      {
+                          echo '<h1>Il nostro sistema</h1><h3>che traccia i tuoi movimenti.</h3><br><a href="#tf-contact" class="btn btn-primary my-btn">Contattaci</a><a href="#tf-portfolio" class="btn btn-primary my-btn2">Ultimo percorso</a>';
+                      }
+                      ?>
                   </div>
               </div>
           </div>
@@ -164,11 +169,7 @@ session_start();
                             
               if(!isset($_SESSION['username']) AND !isset($_SESSION['password']))
               {
-                  echo '<div class="row"><div class="col-md-4"><img src="img/09.jpg" class="img-responsive"></div><div class="col-md-4"><img src="img/02.jpg" class="img-responsive"></div><div class="col-md-4"><img src="img/03.jpg" class="img-responsive"></div></div><div class="row toppadding">
-                  <div class="col-md-4"><img src="img/04.jpg" class="img-responsive">
-                  </div><div class="col-md-4"><img src="img/05.jpg" class="img-responsive">
-                  </div><div class="col-md-4"><img src="img/06.jpg" class="img-responsive">
-                  </div></div>';
+                  echo '<div class="row"><div class="col-md-4"><img src="img/09.jpg" class="img-responsive"></div><div class="col-md-4"><img src="img/02.jpg" class="img-responsive"></div><div class="col-md-4"><img src="img/03.jpg" class="img-responsive"></div></div><div class="row toppadding"><div class="col-md-4"><img src="img/04.jpg" class="img-responsive"></div><div class="col-md-4"><img src="img/05.jpg" class="img-responsive"></div><div class="col-md-4"><img src="img/06.jpg" class="img-responsive"></div></div>';
               }
               else
               {
@@ -242,8 +243,7 @@ session_start();
       <div id="tf-contact">
           <div class="container">
               <div class="section-title">
-                  <h3>Contact us</h3>
-                  <p>testo 1</p>
+                  <h3>Contattaci</h3>
                   <hr>
               </div>
   
