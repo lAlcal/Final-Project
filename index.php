@@ -30,7 +30,6 @@ session_start();
       ================================================== -->
       <link rel="stylesheet" type="text/css"  href="css/style.css">
       <link rel="stylesheet" type="text/css" href="css/responsive.css">
-      <link rel="stylesheet" type="text/css" href="css/dropdownlogin.css">
       
       <script type="text/javascript" src="js/modernizr.custom.js"></script>
   
@@ -64,7 +63,6 @@ session_start();
                       <!-- Collect the nav links, forms, and other content for toggling -->
                       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav navbar-right">
-                          <li><a href="index.php">Home</a></li>
                           <li><a href="#tf-portfolio">Portfolio</a></li>
                           <li><a href="#tf-about">About</a></li>
                           <li><a href="#tf-contact">Contact</a></li>
@@ -76,7 +74,7 @@ session_start();
                             }
                             else
                             {
-                                echo "<li><a href='account.php'>".$_SESSION['username']."</a></li>";
+                                echo "<li><a href='account.php'>".$_SESSION['username']."</a></li><li><a href='index.php?logout=true'>Logout</a></li>";
                             }
                             
                             ?>
@@ -153,35 +151,37 @@ session_start();
               </div>
   
               <div class="space"></div>
-  
-              <div class="row">
-                  <div class="col-md-4">
-                      <img src="img/09.jpg" class="img-responsive">
-                  </div>
-  
-                  <div class="col-md-4">
-                      <img src="img/02.jpg" class="img-responsive">
-                  </div>
-  
-                  <div class="col-md-4">
-                      <img src="img/03.jpg" class="img-responsive">
-                  </div>
-              </div>
-  
-              <div class="row toppadding">
-                  <div class="col-md-4">
-                      <img src="img/04.jpg" class="img-responsive">
-                  </div>
-  
-                  <div class="col-md-4">
-                      <img src="img/05.jpg" class="img-responsive">
-                  </div>
-  
-                  <div class="col-md-4">
-                      <img src="img/06.jpg" class="img-responsive">
-                  </div>
-              </div>
-  
+              <?php
+                            
+              if(!isset($_SESSION['username']) AND !isset($_SESSION['password']))
+              {
+                  echo '<div class="row"><div class="col-md-4"><img src="img/09.jpg" class="img-responsive"></div><div class="col-md-4"><img src="img/02.jpg" class="img-responsive"></div><div class="col-md-4"><img src="img/03.jpg" class="img-responsive"></div></div><div class="row toppadding">
+                  <div class="col-md-4"><img src="img/04.jpg" class="img-responsive">
+                  </div><div class="col-md-4"><img src="img/05.jpg" class="img-responsive">
+                  </div><div class="col-md-4"><img src="img/06.jpg" class="img-responsive">
+                  </div></div>';
+              }
+              else
+              {
+              ?>
+              <div id="map" style="width:100%;height:500px"></div>
+              <script>
+                  function myMap() 
+                  {
+                      var myCenter = new google.maps.LatLng(45.552548,11.555642);
+                      var mapCanvas = document.getElementById("map");
+                      var mapOptions = {center: myCenter, zoom:15};
+                      var map = new google.maps.Map(mapCanvas, mapOptions);
+                      var marker = new google.maps.Marker({position:myCenter});
+                      marker.setMap(map);
+                      var marker = new google.maps.Marker({position:new google.maps.LatLng(51.508742,-0.120850)});
+                      marker.setMap(map);
+                  }
+              </script>
+              <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB0eUzC_no58hHDQ2rf2QIYDZOcWXflmAk&callback=myMap"></script>
+              <?php
+              }
+              ?>
           </div>
       </div>
   
@@ -311,3 +311,18 @@ session_start();
 
   </body>
 </html>
+
+<?php
+
+function logout()
+{
+    session_unset();
+    echo "<script>alert('Logout riuscito! Ritorno alla home.');window.location.href='index.php';</script>"; 
+}
+
+if(isset($_GET['logout']))
+{
+    logout();
+}
+
+?>
