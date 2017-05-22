@@ -146,7 +146,16 @@ session_start();
       <div id="tf-portfolio">
           <div class="container">
               <div class="section-title">
-                  <h3>Il nostro prodotto</h3>
+                  <?php
+                  if(!isset($_SESSION['username']) AND !isset($_SESSION['password']))
+                  {
+                      echo "<h3>Il nostro prodotto</h3>";
+                  }
+                  else
+                  {
+                      echo "<h3>Ultimo percorso</h3>";
+                  }
+                  ?>
                   <hr>
               </div>
   
