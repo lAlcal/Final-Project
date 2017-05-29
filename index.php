@@ -70,7 +70,7 @@ session_start();
                             
                             if(!isset($_SESSION['username']) AND !isset($_SESSION['password']))
                             {
-                                echo "<li><a href='login.php'>Login</a></li>";
+                                echo "<li><a href='login.php'>Login</a></li><li><a href='registrazione.php'>Registrati</a></li>";
                             }
                             else
                             {

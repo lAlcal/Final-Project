@@ -44,6 +44,26 @@ session_start();
       <![endif]-->
     </head>
     <body>
+        <script>
+            function Controllo() 
+            {
+                var pass1 = document.getElementById("pass1").value;
+                var pass2 = document.getElementById("pass2").value;
+                var ok = true;
+                if (pass1 != pass2) 
+                {
+                    //alert("Passwords Do not match");
+                    document.getElementById("pass1").style.borderColor = "#E34234";
+                    document.getElementById("pass2").style.borderColor = "#E34234";
+                    ok = false;
+                }
+                else 
+                {
+                    alert("Passwords Match!!!");
+                }
+                return ok;
+            }
+        </script>
         <div id="tf-home">
             <div class="overlay" style="height: 100vh">
                 <div id="sticky-anchor"></div>
@@ -71,9 +91,11 @@ session_start();
   
                 <div class="container">
                     <div class="content">
-                        <form action="login.php" method="post">
+                        <form action="login.php" method="post" onsubmit="return Controllo()">
                             <label style="width:150px;"><h3>Username:</h3><input type="text" name="username" style="color: #000"></label><br>
-                            <label style="width:150px;"><h3>Password:</h3><input type="password" name="password" style="color: #000"></label><br>
+                            <label style="width:150px;"><h3>Email:</h3><input type="text" name="email" style="color: #000"></label><br>
+                            <label style="width:150px;"><h3>Password:</h3><input type="password" id="pass1" name="pass1" style="color: #000"></label><br>
+                            <label style="width:150px;"><h3>Conferma password:</h3><input type="password" id="pass2" name="pass2" style="color: #000"></label><br>
                             <button type="submit" name="Invio" class="btn btn-primary my-btn">Invio</button>
                         </form> 
                     </div>
@@ -97,27 +119,7 @@ session_start();
 
 if(isset($_POST['Invio']))
 {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    $pass = md5($password);
-    $connection=new mysqli("localhost","root","","prova");
-    $result=$connection->query("SELECT username, password, privilegi FROM utenti WHERE username='".$username."' AND password='".$pass."'");
-    if($result->num_rows != 0)
-    {
-        $row=$result->fetch_assoc();
-        $_SESSION['username'] = $username;
-        $_SESSION['password'] = md5($password);
-        $_SESSION['privilegi'] = $row['privilegi'];
-        echo "<script>alert('Login riuscito!');window.location.href='index.php';</script>"; 
-        echo $row['username'];
-    }
-    else
-    {
-        echo "Utente non registrato o password errata<br>";
-        die;
-    }
-    $result->close();
-    $connection->close();
+    
 }
 
 ?>
