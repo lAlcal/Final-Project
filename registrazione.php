@@ -121,11 +121,11 @@ session_start();
                 <div class="container">
                     <div class="content">
                         <form method="post" action="registrazione.php">
-                            <label style="width:150px;"><h3>Username:</h3><input type="text" name="username" id="username" onchange="ControlloUE('username', this.value)" style="color: #000"></label><br>
-                            <label style="width:150px;"><h3>Email:</h3><input type="email" name="email" id="email" onchange="ControlloUE('email', this.value)" style="color: #000"></label><br>
-                            <label style="width:150px;"><h3>Password:</h3><input type="password" id="pass1" name="pass1" style="color: #000"></label><br>
-                            <label style="width:150px;"><h3>Conferma password:</h3><input type="password" onchange="Controllo()" id="pass2" name="pass2" style="color: #000"></label><br>
-                            <button type="submit" id="bot" name="Invio" class="btn btn-primary my-btn">Invio</button>
+                            <label style="width:150px;"><h3>Username:</h3><input type="text" name="username" id="username" required onchange="ControlloUE('username', this.value)" style="color: #000"></label><br>
+                            <label style="width:150px;"><h3>Email:</h3><input type="email" name="email" id="email" required onchange="ControlloUE('email', this.value)" style="color: #000"></label><br>
+                            <label style="width:150px;"><h3>Password:</h3><input type="password" id="pass1" name="pass1" required style="color: #000"></label><br>
+                            <label style="width:150px;"><h3>Conferma password:</h3><input type="password" onchange="Controllo()" required id="pass2" name="pass2" style="color: #000"></label><br>
+                            <button type="submit" id="bot" required name="Invio" class="btn btn-primary my-btn">Invio</button>
                         </form> 
                     </div>
                 </div>
