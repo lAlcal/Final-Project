@@ -49,19 +49,48 @@ session_start();
             {
                 var pass1 = document.getElementById("pass1").value;
                 var pass2 = document.getElementById("pass2").value;
-                var ok = true;
                 if (pass1 != pass2) 
                 {
-                    //alert("Passwords Do not match");
-                    document.getElementById("pass1").style.borderColor = "#E34234";
+                    alert("Le password non corrispondono");
                     document.getElementById("pass2").style.borderColor = "#E34234";
-                    ok = false;
+                    document.getElementById("bot").disabled = true;
                 }
-                else 
+                else
                 {
-                    alert("Passwords Match!!!");
+                    document.getElementById("bot").disabled = false;
                 }
-                return ok;
+            }
+            
+            function ControlloUE(campo, valore)
+            {
+                var xhttp = new XMLHttpRequest();
+                document.getElementById("bot").disabled = false;
+                xhttp.onreadystatechange = function()
+                {
+                    if (this.readyState == 4 && this.status == 200) 
+                    {
+                        if(this.response == true)
+                        {
+                            document.getElementById("bot").disabled = true;
+                            if(campo == 'username')
+                            {
+                                alert("Username già usato");
+                                document.getElementById("username").style.borderColor = "#E34234";
+                            }
+                            if(campo == 'email')
+                            {
+                                document.getElementById("email").style.borderColor = "#E34234";
+                                alert("Email già usata");
+                            }
+                        }
+                        else
+                        {
+                            document.getElementById("bot").disabled = false;
+                        }
+                    }
+                };
+                xhttp.open("GET", "controllo.php?campo="+campo+"&valore="+valore, true);
+                xhttp.send();
             }
         </script>
         <div id="tf-home">
@@ -91,12 +120,12 @@ session_start();
   
                 <div class="container">
                     <div class="content">
-                        <form action="login.php" method="post" onsubmit="return Controllo()">
-                            <label style="width:150px;"><h3>Username:</h3><input type="text" name="username" style="color: #000"></label><br>
-                            <label style="width:150px;"><h3>Email:</h3><input type="text" name="email" style="color: #000"></label><br>
+                        <form method="post" action="registrazione.php">
+                            <label style="width:150px;"><h3>Username:</h3><input type="text" name="username" id="username" onchange="ControlloUE('username', this.value)" style="color: #000"></label><br>
+                            <label style="width:150px;"><h3>Email:</h3><input type="email" name="email" id="email" onchange="ControlloUE('email', this.value)" style="color: #000"></label><br>
                             <label style="width:150px;"><h3>Password:</h3><input type="password" id="pass1" name="pass1" style="color: #000"></label><br>
-                            <label style="width:150px;"><h3>Conferma password:</h3><input type="password" id="pass2" name="pass2" style="color: #000"></label><br>
-                            <button type="submit" name="Invio" class="btn btn-primary my-btn">Invio</button>
+                            <label style="width:150px;"><h3>Conferma password:</h3><input type="password" onchange="Controllo()" id="pass2" name="pass2" style="color: #000"></label><br>
+                            <button type="submit" id="bot" name="Invio" class="btn btn-primary my-btn">Invio</button>
                         </form> 
                     </div>
                 </div>
@@ -119,7 +148,26 @@ session_start();
 
 if(isset($_POST['Invio']))
 {
-    
+    $username = $_POST['username'];
+    $password = $_POST['pass1'];
+    $pass = md5($password);
+    $email = $_POST['email'];
+    $connection=new mysqli("localhost","root","","prova");
+    $result=$connection->query("INSERT INTO utenti (username, email, password) VALUES ('".$username."','".$email."', '".$pass."')");
+    if($result)
+    {
+        $_SESSION['username'] = $username;
+        $_SESSION['password'] = $pass;
+        $_SESSION['privilegi'] = 'user';
+        echo "<script>alert('Registrazione effettuata!');window.location.href='index.php';</script>"; 
+        $result->close();
+    }
+    else
+    {
+        echo "<script>alert('Errore')</script>";
+    }
+    echo $username . $password;
+    $connection->close();
 }
 
 ?>

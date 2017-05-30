@@ -113,7 +113,7 @@ if(isset($_POST['Invio']))
     }
     else
     {
-        echo "Utente non registrato o password errata<br>";
+        echo "<script>alert('Errore!');</script>";
         die;
     }
     $result->close();
