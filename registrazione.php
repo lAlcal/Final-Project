@@ -1,6 +1,7 @@
 <?php
 session_start();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -159,7 +160,7 @@ if(isset($_POST['Invio']))
         $_SESSION['username'] = $username;
         $_SESSION['password'] = $pass;
         $_SESSION['privilegi'] = 'user';
-        echo "<script>alert('Registrazione effettuata!');window.location.href='index.php';</script>"; 
+        echo "<script>alert('Registrazione effettuata!');window.location.href='https://index.php';</script>"; 
         $result->close();
     }
     else
