@@ -34,7 +34,7 @@ session_start();
         
         <script type="text/javascript" src="js/modernizr.custom.js"></script>
         
-        <link href='http://fonts.googleapis.com/css?family=Raleway:500,600,700,100,800,900,400,200,300' rel='stylesheet' type='text/css'>
+        <!--<link href='http://fonts.googleapis.com/css?family=Raleway:500,600,700,100,800,900,400,200,300' rel='stylesheet' type='text/css'>
         <link href='http://fonts.googleapis.com/css?family=Playball' rel='stylesheet' type='text/css'>
         
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -70,13 +70,25 @@ session_start();
                     </div><!-- /.container-fluid -->
                 </nav>
                 
-                <div class="container" style="height:100vh">
+                <div class="container" style="height:100vh;">
                     <div class="content">
-                        <nav class="cd-side-nav">
-                            <ul><li><button type="button" class="btn btn-primary my-btn dark" name="avatar"><img src="img/avatar.jpg" alt="Avatar" height="150" width="150"></button></li></ul>
-                            <ul><li><button type="button" name="Impostazioni" class="btn btn-primary my-btn dark">Impostazioni</button></li></ul>
-                            <ul><li><button type="button" name="Impostazioni" class="btn btn-primary my-btn dark">Prova</button></li></ul>
-                        </nav>
+                        <div style="height:50vh; z-index:-1; background-color:whitesmoke; padding-top: 20px; padding-bottom:20px">
+                            <nav class="cd-side-nav" style="width:300px">
+                                <ul><li><button type="button" style="width:210px" class="btn btn-primary my-btn dark" name="avatar"><img src="img/avatar.jpg" alt="Avatar" height="150" width="150"></button></li></ul>
+                                <ul><li><button type="button" style="width:210px" name="Impostazioni" class="btn btn-primary my-btn dark">Impostazioni</button></li></ul>
+                                <ul><li><button type="button" style="width:210px" name="UltimiPercorsi" class="btn btn-primary my-btn dark">Ultimi percorsi</button></li></ul>
+                                <ul><li><button type="button" style="width:210px" name="Esci" class="btn btn-primary my-btn dark">Esci</button></li></ul>
+                            </nav>
+                            <div style="margin-left:300px; border-left: thick solid #000; color: #000; width:750px; height:447px">
+                                
+                                
+                                <!--
+                                    Inserire ajax impostazioni account
+                                -->
+                                
+                                
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
