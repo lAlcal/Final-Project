@@ -114,7 +114,7 @@ if(isset($_POST['Invio']))
     }
     else
     {
-        echo "<script>alert('Errore!');</script>";
+        echo "<script>alert('Username o password errati!');</script>";
         die;
     }
     $result->close();

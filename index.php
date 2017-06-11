@@ -74,7 +74,7 @@ session_start();
                             }
                             else
                             {
-                                echo "<li><a href='account.php'>".$_SESSION['username']."</a></li><li><a href='index.php?logout=true'>Logout</a></li>";
+                                echo "<li><a href='account.php' id='account'>".$_SESSION['username']."</a></li><li><a href='index.php?logout=true'>Logout</a></li>";
                             }
                             
                             ?>

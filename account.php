@@ -45,6 +45,39 @@ session_start();
 <![endif]-->
     </head>
     <body>
+        <script>
+            
+            function avatar()
+            {
+                var div = document.getElementById("div").innerHTML= "<form action='account.php' method='post' enctype='multipart/form-data'><br><h2 style='margin: 40px;'>Cambia immagine</h2><br><a class='btn btn-primary my-btn dark' style='margin:40px;' href=''><input type=file name='immagine'></a><br><button type='submit' name='invio' class='btn btn-primary my-btn dark' style='margin:40px;'>Invio</button></form>";
+            }
+            
+            function impostazioni()
+            {
+                var div = document.getElementById("div").innerHTML= '<button type="button" style="width:210px; margin:50px;" name="Cu" class="btn btn-primary my-btn dark" onclick="CU()">Cambia Username</button><br><button type="button" style="width:210px; margin:50px;" name="Cp" class="btn btn-primary my-btn dark" onclick="CP()">Cambia Password</button><br><button type="button" style="width:210px; margin:50px;" name="Ce" class="btn btn-primary my-btn dark" onclick="CE()">Cambia Email</button>';
+            }
+            
+            function Up()
+            {
+                var div = document.getElementById("div").innerHTML= "<p>ccc</p>";
+            }
+            
+            function CU()
+            {
+                var div = document.getElementById("div").innerHTML= "<form action='account.php' method='post'>Nuovo username:<input type='text' style='width:210px; margin:50px; background-color:#2F937B;' class='btn btn-primary my-btn dark'><br><button type='submit' name='cambia' style='width:210px; margin:50px;' class='btn btn-primary my-btn dark'>CambiaU</button></form>";
+            }
+            
+            function CP()
+            {
+                var div = document.getElementById("div").innerHTML= "<p>ccc</p>";
+            }
+            
+            function CE()
+            {
+                var div = document.getElementById("div").innerHTML= "<p>ccc</p>";
+            }
+            
+        </script>
         <div id="tf-home">
             <div class="overlay">
                 <div id="sticky-anchor"></div>
@@ -74,19 +107,38 @@ session_start();
                     <div class="content">
                         <div style="height:50vh; z-index:-1; background-color:whitesmoke; padding-top: 20px; padding-bottom:20px">
                             <nav class="cd-side-nav" style="width:300px">
-                                <ul><li><button type="button" style="width:210px" class="btn btn-primary my-btn dark" name="avatar"><img src="img/avatar.jpg" alt="Avatar" height="150" width="150"></button></li></ul>
-                                <ul><li><button type="button" style="width:210px" name="Impostazioni" class="btn btn-primary my-btn dark">Impostazioni</button></li></ul>
-                                <ul><li><button type="button" style="width:210px" name="UltimiPercorsi" class="btn btn-primary my-btn dark">Ultimi percorsi</button></li></ul>
-                                <ul><li><button type="button" style="width:210px" name="Esci" class="btn btn-primary my-btn dark">Esci</button></li></ul>
+                                <ul><li><button type="button" style="width:210px" class="btn btn-primary my-btn dark" name="avatar" id="avatar" onclick="avatar()">
+                                    
+                                    <?php
+                                    
+                                    $connection=new mysqli("localhost","root","","prova");
+                                    $result=$connection->query("SELECT immagine FROM utenti WHERE username='".$_SESSION['username']. "' AND password ='".$_SESSION['password']."'");
+                                    if($result)
+                                    {
+                                        while($row = $result->fetch_assoc())
+                                        {
+                                            $img = $row['immagine'];
+                                            echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['immagine']).'" height="150px" width="150px">';
+                                        }
+                                        $result->close();
+                                    }
+                                    else
+                                    {
+                                        echo "<script>alert('Errore')</script>";
+                                    }
+                                    $connection->close();
+                                    
+                                    ?>
+                                    
+                                    </button></li></ul>
+                                <ul><li><button type="button" style="width:210px" name="Impostazioni" class="btn btn-primary my-btn dark" id="impostazioni" onclick="impostazioni()">Impostazioni</button></li></ul>
+                                <ul><li><button type="button" style="width:210px" name="UltimiPercorsi" class="btn btn-primary my-btn dark" id="Up" onclick="Up()">Ultimi percorsi</button></li></ul>
+                                <ul><li><form action="registrazione.php" method="post"><button type="submit" style="width:210px" name="Esci" class="btn btn-primary my-btn dark">Esci</button></form></li></ul>
                             </nav>
-                            <div style="margin-left:300px; border-left: thick solid #000; color: #000; width:750px; height:447px">
-                                
-                                
-                                <!--
-                                    Inserire ajax impostazioni account
-                                -->
-                                
-                                
+                            <div style="margin-left:300px; border-left: thick solid #000; color: #000; width:750px; height:440px;" id="div">
+                                <button type="button" style="width:210px; margin:50px;" name="UltimiPercorsi" class="btn btn-primary my-btn dark" onclick="CU()">Cambia Username</button><br>
+                                <button type="button" style="width:210px; margin:50px;" name="UltimiPercorsi" class="btn btn-primary my-btn dark" onclick="CP()">Cambia Password</button><br>
+                                <button type="button" style="width:210px; margin:50px;" name="UltimiPercorsi" class="btn btn-primary my-btn dark" onclick="CE()">Cambia Email</button>
                             </div>
                         </div>
                     </div>
@@ -132,3 +184,51 @@ Parte per acquisire informazioni inserite nella forma e contattare l'azienda.
         </script>
     </body>
 </html>
+
+<?php
+
+function Logout()
+{
+    session_unset();
+    echo "<script>alert('Logout riuscito! Ritorno alla home.');window.location.href='index.php';</script>"; 
+}
+
+if(isset($_GET['Esci']))
+{
+    Logout();
+}
+
+if(isset($_POST['invio']))
+{
+    $image = addslashes(file_get_contents($_FILES['immagine']['tmp_name']));
+    
+    $connection=new mysqli("localhost","root","","prova");
+    $result=$connection->query("UPDATE utenti SET immagine='".$image."' WHERE username='".$_SESSION['username']. "' AND password ='".$_SESSION['password']."'");
+    if($result)
+    {
+        
+    }
+    else
+    {
+        echo "<script>alert('Errore')</script>";
+    }
+    $connection->close();
+    echo "<script>window.location.href='account.php';</script>"; 
+}
+
+if(isset($_POST['CambiaU']))
+{
+    
+}
+
+if(isset($_POST['CambiaP']))
+{
+    
+}
+
+if(isset($_POST['CambiaE']))
+{
+    
+}
+
+?>

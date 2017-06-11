@@ -154,20 +154,19 @@ if(isset($_POST['Invio']))
     $pass = md5($password);
     $email = $_POST['email'];
     $connection=new mysqli("localhost","root","","prova");
-    $result=$connection->query("INSERT INTO utenti (username, email, password) VALUES ('".$username."','".$email."', '".$pass."')");
+    $result=$connection->query("INSERT INTO utenti (username, email, password, immagine) VALUES ('".$username."','".$email."', '".$pass."', LOAD_FILE('D:/xampp/htdocs/Tesina/img/avatar.jpg'))");
     if($result)
     {
         $_SESSION['username'] = $username;
         $_SESSION['password'] = $pass;
         $_SESSION['privilegi'] = 'user';
-        echo "<script>alert('Registrazione effettuata!');window.location.href='https://index.php';</script>"; 
+        echo "<script>alert('Registrazione effettuata!');window.location.href='index.php';</script>"; 
         $result->close();
     }
     else
     {
         echo "<script>alert('Errore')</script>";
     }
-    echo $username . $password;
     $connection->close();
 }
 
