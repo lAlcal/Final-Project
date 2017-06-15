@@ -64,19 +64,66 @@ session_start();
             
             function CU()
             {
-                var div = document.getElementById("div").innerHTML= "<form action='account.php' method='post'>Nuovo username:<input type='text' style='width:210px; margin:50px; background-color:#2F937B;' class='btn btn-primary my-btn dark'><br><button type='submit' name='cambia' style='width:210px; margin:50px;' class='btn btn-primary my-btn dark'>CambiaU</button></form>";
+                var div = document.getElementById("div").innerHTML= "<form action='account.php' method='post'>Nuovo username:<input type='text' style='width:210px; margin:50px; background-color:#2F937B;' id='username' name='username' class='btn btn-primary my-btn dark' onchange='ControlloUE(\"username\", this.value)' required><br><button type='submit' name='CambiaU' style='width:210px; margin:50px;' id='bot' class='btn btn-primary my-btn dark'>Cambia</button></form>";
             }
             
             function CP()
             {
-                var div = document.getElementById("div").innerHTML= "<p>ccc</p>";
+                var div = document.getElementById("div").innerHTML= "<form action='account.php' method='post'><label style='width:300px;'>Nuovo password:<input type='password' style='width:210px; margin:50px; background-color:#2F937B;' id='pass1' name='pass1' class='btn btn-primary my-btn dark' required></label><br><label style='width:300px;'>Conferma password:<input type='password' style='width:210px; margin:50px; background-color:#2F937B;' id='pass2' name='pass2' class='btn btn-primary my-btn dark' onchange='Controllo()' required></label><br><button type='submit' name='CambiaP' style='width:210px; margin:50px;' id='bot' class='btn btn-primary my-btn dark'>Cambia</button></form>";
             }
             
             function CE()
             {
-                var div = document.getElementById("div").innerHTML= "<p>ccc</p>";
+                var div = document.getElementById("div").innerHTML= "<form action='account.php' method='post'>Nuova email:<input type='email' style='width:210px; margin:50px; background-color:#2F937B;' id='email' name='email' class='btn btn-primary my-btn dark' onchange='ControlloUE(\"email\", this.value)' required><br><button type='submit' name='CambiaE' style='width:210px; margin:50px;' id='bot' class='btn btn-primary my-btn dark'>Cambia</button></form>";
             }
             
+            function Controllo() 
+            {
+                var pass1 = document.getElementById("pass1").value;
+                var pass2 = document.getElementById("pass2").value;
+                if (pass1 != pass2) 
+                {
+                    alert("Le password non corrispondono");
+                    document.getElementById("pass2").style.borderColor = "#E34234";
+                    document.getElementById("bot").disabled = true;
+                }
+                else
+                {
+                    document.getElementById("bot").disabled = false;
+                }
+            }
+            
+            function ControlloUE(campo, valore)
+            {
+                var xhttp = new XMLHttpRequest();
+                document.getElementById("bot").disabled = false;
+                xhttp.onreadystatechange = function()
+                {
+                    if (this.readyState == 4 && this.status == 200) 
+                    {
+                        if(this.response == true)
+                        {
+                            document.getElementById("bot").disabled = true;
+                            if(campo == 'username')
+                            {
+                                alert("Username già usato");
+                                document.getElementById("username").style.borderColor = "#E34234";
+                            }
+                            if(campo == 'email')
+                            {
+                                document.getElementById("email").style.borderColor = "#E34234";
+                                alert("Email già usata");
+                            }
+                        }
+                        else
+                        {
+                            document.getElementById("bot").disabled = false;
+                        }
+                    }
+                };
+                xhttp.open("GET", "controllo.php?campo="+campo+"&valore="+valore, true);
+                xhttp.send();
+            }
         </script>
         <div id="tf-home">
             <div class="overlay">
@@ -204,11 +251,7 @@ if(isset($_POST['invio']))
     
     $connection=new mysqli("localhost","root","","prova");
     $result=$connection->query("UPDATE utenti SET immagine='".$image."' WHERE username='".$_SESSION['username']. "' AND password ='".$_SESSION['password']."'");
-    if($result)
-    {
-        
-    }
-    else
+    if(!$result)
     {
         echo "<script>alert('Errore')</script>";
     }
@@ -218,7 +261,20 @@ if(isset($_POST['invio']))
 
 if(isset($_POST['CambiaU']))
 {
-    
+    $username = $_POST['username'];
+    echo $username;
+    $connection=new mysqli("localhost","root","","prova");
+    $result=$connection->query("UPDATE utenti SET username='".$username."' WHERE username='".$_SESSION['username']. "' AND password ='".$_SESSION['password']."'");
+    if($result)
+    {
+        $_SESSION['username'] = $username;
+    }
+    else
+    {
+        echo "<script>alert('Errore')</script>";
+    }
+    $connection->close();
+    echo "<script>window.location.href='account.php';</script>"; 
 }
 
 if(isset($_POST['CambiaP']))

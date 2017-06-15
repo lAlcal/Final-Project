@@ -1,10 +1,51 @@
 <?php
 session_start();
+if(isset($_POST['invio']))
+{
+    $connection=new mysqli("localhost","root","","prova");
+    
+    $result=$connection->query("INSERT INTO percorsi (username) VALUES ('".$_SESSION['username']."')");
+    if(!$result)
+    {
+        echo "<script>alert('Errore')</script>";
+    }
+    
+    $result=$connection->query("SELECT Max(id) AS var FROM percorsi");
+    if($result)
+    {
+        while($row = $result->fetch_assoc())
+        {
+            $id = $row['var'];
+        }
+        $result->close();
+        $file = file_get_contents($_FILES['file']['tmp_name']);
+        $exfile = explode("\n", $file);
+        $punti = new stdClass();
+        $punti -> arraypunti = array();
+        foreach($exfile as $key => $str)
+        {
+            $efile = explode(",", $str);
+            $result=$connection->query("INSERT INTO punti (username,data,ora,latitudine,longitudine,satelliti,precisione,velocita,idp) VALUES ('".$_SESSION['username']."','".$efile[0]."','".$efile[1]."','".$efile[2]."','".$efile[3]."','".$efile[4]."','".$efile[5]."','".$efile[6]."','".$id."')");
+            if(!$result)
+            {
+                echo "<script>alert('Errore')</script>";
+            }
+            array_push($punti -> arraypunti, array("lat"=>$efile[2],"lng"=>$efile[3]));
+        }
+        setcookie('stringa', json_encode($punti));
+    }
+    else
+    {
+        echo "<script>alert('Errore')</script>";
+    }
+    $connection->close();
+}
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+    <head>
       <!-- Basic Page Needs
       ================================================== -->
       <meta charset="utf-8">
@@ -42,6 +83,36 @@ session_start();
         <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
       <![endif]-->
+      <style>
+          #table-wrapper 
+          {
+              position:relative;
+          }
+          #table-scroll 
+          {
+              height:240px;
+              overflow:auto;  
+              margin-top:20px;
+          }
+          #table-wrapper table 
+          {
+              width:100%;
+              
+          }
+          #table-wrapper table * 
+          {
+              color:black;
+          }
+          #table-wrapper table thead th .text 
+          {
+              position:absolute;   
+              top:-20px;
+              z-index:2;
+              height:20px;
+              width:35%;
+              border:1px solid red;
+          }
+      </style>
     </head>
     <body>
       <div id="tf-home">
@@ -63,9 +134,28 @@ session_start();
                       <!-- Collect the nav links, forms, and other content for toggling -->
                       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav navbar-right">
-                          <li><a href="#tf-portfolio">Portfolio</a></li>
-                          <li><a href="#tf-about">About</a></li>
-                          <li><a href="#tf-contact">Contact</a></li>
+                            <?php
+                            
+                            if(!isset($_SESSION['username']) AND !isset($_SESSION['password']))
+                            {
+                                echo "<li><a href='#tf-portfolio'>Portfolio</a></li>";
+                            }
+                            else
+                            {
+                                echo "<li><a href='#tf-portfolio'>Ultimo Percorso</a></li>";
+                            }
+                            
+                            if(!isset($_SESSION['username']) AND !isset($_SESSION['password']))
+                            {
+                                echo "<li><a href='#tf-about'>Informazioni</a></li>";
+                            }
+                            else
+                            {
+                                echo "<li><a href='#tf-service'>Nuovo Percorso</a></li>";
+                            }
+                            
+                            ?>
+                          <li><a href="#tf-contact">Contattaci</a></li>
                             <?php
                             
                             if(!isset($_SESSION['username']) AND !isset($_SESSION['password']))
@@ -99,54 +189,18 @@ session_start();
               </div>
           </div>
       </div>
-  
-      <div id="tf-service">
-          <div class="container">
-  
-              <div class="col-md-4">
-  
-                  <div class="media">
-                    <div class="media-left media-middle">
-                      <i class="fa fa-motorcycle"></i>
-                    </div>
-                    <div class="media-body">
-                      <h4 class="media-heading">Brand & Graphics Design</h4>
-                      <p> testo 1</p>
-                    </div>
-                  </div>
-  
-              </div>
-  
-              <div class="col-md-4">
-  
-                  <div class="media">
-                    <div class="media-left media-middle">
-                      <i class="fa fa-gears"></i>
-                    </div>
-                    <div class="media-body">
-                      <h4 class="media-heading">Web Designer & Developer</h4>
-                      <p> testo 2</p>
-                    </div>
-                  </div>
-  
-              </div>
-  
-              <div class="col-md-4">
-  
-                  <div class="media">
-                    <div class="media-left media-middle">
-                      <i class="fa fa-heartbeat"></i>
-                    </div>
-                    <div class="media-body">
-                      <h4 class="media-heading">Business Consultant</h4>
-                      <p> testo 3</p>
-                    </div>
-                  </div>
-  
-              </div>
-              
-          </div>
-      </div>
+        <?php
+        
+        if(!isset($_SESSION['username']) AND !isset($_SESSION['password']))
+        {
+            echo "<div id='tf-service'><div class='container'><div class='col-md-4'><div class='media'><div class='media-left media-middle'><i class='fa fa-motorcycle'></i></div><div class='media-bod'y'><h4 class='media-heading'>Brand & Graphics Design</h4><p> testo 1</p></div></div></div><div class='col-md-4'><div class='media'><div class='media-left media-middle'><i class='fa fa-gears'></i></div><div class='media-body'><h4 class='media-heading'>Web Designer & Developer</h4<p> testo 2</p></div></div></div><div class='ol-md-4'><div class='media'><div class'media-left media-middle'><i class='fa fa-heartbeat'></i></div><div class='media-body'><h4 class='media-heading'>Business Consultant</h4><p> testo 3</p></div></div></div></div></div>";
+        }
+        else
+        {
+            echo "<div id='tf-service'><div class='container'><form action='index.php' method='post' enctype='multipart/form-data' style='text-align:center;'><br><h2 style='margin: 40px;'>Inserisci il file</h2><br><a class='btn btn-primary my-btn dark' style='margin:40px;' href=''><input type=file name='file'></a><br><button type='submit' name='invio' class='btn btn-primary my-btn dark' style='margin:40px;'>Invio</button></form></div></div>";
+        }
+        
+        ?>
   
       <div id="tf-portfolio">
           <div class="container">
@@ -176,16 +230,34 @@ session_start();
               ?>
               <div id="map" style="width:100%;height:500px"></div>
               <script>
+                  var cookiestring=RegExp("stringa[^;]+").exec(document.cookie);
+                  var stringa = unescape(!!cookiestring ? cookiestring.toString().replace(/^[^=]+./,"") : "");
+                  stringa = JSON.parse(stringa);
+                  
                   function myMap() 
                   {
-                      var myCenter = new google.maps.LatLng(45.552548,11.555642);
+                      var myCenter = new google.maps.LatLng(stringa.arraypunti[0].lat, stringa.arraypunti[0].lng);
                       var mapCanvas = document.getElementById("map");
                       var mapOptions = {center: myCenter, zoom:15};
                       var map = new google.maps.Map(mapCanvas, mapOptions);
-                      var marker = new google.maps.Marker({position:myCenter});
-                      marker.setMap(map);
-                      var marker = new google.maps.Marker({position:new google.maps.LatLng(51.508742,-0.120850)});
-                      marker.setMap(map);
+                      request(map);
+                  }
+                  
+                  function request(map)
+                  {
+                      var punti = [];
+                      for(var i = 0; i<stringa.arraypunti.length; i++)
+                      {
+                          var latlng = new google.maps.LatLng(stringa.arraypunti[i].lat, stringa.arraypunti[i].lng);
+                          punti.push(latlng);
+                      }
+                      var snappedPolyline = new google.maps.Polyline({
+                          path: punti,
+                          strokeColor: 'black',
+                          strokeOpacity: 1.0,
+                          strokeWeight: 3
+                      });
+                      snappedPolyline.setMap(map);
                   }
               </script>
               <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB0eUzC_no58hHDQ2rf2QIYDZOcWXflmAk&callback=myMap"></script>
@@ -197,47 +269,91 @@ session_start();
   
       <div id="tf-about">
           <div class="overlay">
-              <div class="container">
-                  <div class="row">
-                      <div class="col-md-6 col-md-offset-6">
-                          <h3>About Us</h3>
-                          <br>
-                          <p>testo 01.</p>
-                          <p>testo 02.</p>
-                          <br>
-                          <a href="#tf-why-me" class="btn btn-primary my-btn dark">Why Hire Me</a>
-                      </div>
-                  </div>
+              <div class="container" style="text-align:center">
+                  <?php
+                  if(!isset($_SESSION['username']) AND !isset($_SESSION['password']))
+                  {
+                      echo "<div class='row'><div class='col-md-6 col-md-offset-6'><h3>About Us</h3><br><p>testo 01.</p><p>testo 02.</p><br><a href='#tf-why-me' class='btn btn-primary my-btn dark'>Why Hire Me</a></div></div>";
+                  }
+                  else
+                  {
+                      echo "<h3>Punti precedenti</h3>";
+                      $connection=new mysqli("localhost","root","","prova");
+    
+                      $result=$connection->query("SELECT Max(id) AS var FROM percorsi");
+                      if($result)
+                      {
+                          while($row = $result->fetch_assoc())
+                          {
+                              $id = $row['var'];
+                          }
+                          $result->close();
+                          
+                          $result=$connection->query("SELECT * FROM punti WHERE idp<$id AND username=0'".$_SESSION['username']."'");
+                          if($result)
+                          {
+                              echo "<div id='table-wrapper'><div id='table-scroll'><table style='text-align:left'><tr><th style='width: 100px;'>Data</th><th style='width: 100px;'>Ora</th><th style='width: 100px;'>Latitudine</th><th style='width: 100px;'>Longitudine</th><th style='width: 100px;'>N° satelliti</th><th style='width: 100px;'>Precisione</th><th style='width: 100px;'>Velocità km/h</th></tr>";
+                              $i=0;
+                              while($row = $result->fetch_assoc())
+                              {
+                                  echo "<tr><td style='width: 100px;'>".$row['data']."</td><td style='width: 100px;'>".$row['ora']."</td><td style='width: 100px;'>".$row['latitudine']."</td><td style='width: 100px;'>".$row['longitudine']."</td><td style='width: 100px;'>".$row['satelliti']."</td><td style='width: 100px;'>".$row['precisione']."</td><td style='width: 100px;'>".$row['velocita']."</td><td style='width: 100px;'><form><input type='hidden' name='valore' value='$i'><button class='btn btn-primary my-btn dark' name='visualizza'>Visualizza</button></form></td></tr>";
+                                  $i++;
+                              }
+                              echo "</table></div></div>";
+                              $result->close();
+                          }
+                          else
+                          {
+                              echo "<br>Non sono presenti punti precedentemente inseriti.";
+                          }
+                          
+                      }
+                      else
+                      {
+                          echo "<script>alert('Errore')</script>";
+                      }
+                      $connection->close();
+                  }
+                  
+                  ?>
               </div>
           </div>
       </div>
   
       <div id="tf-why-me">
-          <div class="overlay">
-              <div class="container">
-                  <div class="row">
-                      <div class="col-md-6">
-                          <h3>Why Hire Me</h3>
-                          <br>
-                          <ul class="list-inline why-me">
-                              <li>
-                                  <h4>I Do Brand that Sells</h4>
-                                  <p>Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.</p>
-                              </li>
-                              <li>
-                                  <h4>You will love my Designs</h4>
-                                  <p>Donec lacinia congue felis in faucibus. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.</p>
-                              </li>
-                              <li>
-                                  <h4>I Deliver on Time</h4>
-                                  <p>Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.</p>
-                              </li>
-                          </ul>
-                          <a href="#tf-contact" class="btn btn-primary my-btn dark">Contact</a>
-                      </div>
-                  </div>
-              </div>
-          </div>
+          <?php
+          if(!isset($_SESSION['username']) AND !isset($_SESSION['password']))
+          {
+              echo "<div class='overlay'><div class='container'><div class='row'><div class='col-md-6'><h3>Why Hire Me</h3><br><ul class='list-inline why-me'><li><h4>I Do Brand that Sells</h4><p>Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.</p></li><li><h4>You will love my Designs</h4><p>Donec lacinia congue felis in faucibus. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.</p></li><li><h4>I Deliver on Time</h4><p>Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.</p></li></ul><a href='#tf-contact' class='btn btn-primary my-btn dark'>Contact</a></div></div></div></div>";
+          }
+          else
+          {
+              $connection=new mysqli("localhost","root","","prova");  
+              $result=$connection->query("SELECT DISTINCT percorsi.id, punti. data, punti.ora, punti.username FROM percorsi INNER JOIN punti ON percorsi.id=punti.idp WHERE punti.username='".$_SESSION['username']."';");
+              if($result->num_rows>0)
+              {
+                  echo "<div class='overlay' style='background-color:white'><div class='container' style='text-align:center;'><h3>Percorsi precedenti</h3><div id='table-wrapper'><div id='table-scroll'><table style='text-align:left'><tr><th style='width: 100px;'>Data</th><th style='width: 100px;'>Ora</th><th style='width: 100px;'>ID</th</tr>";
+                  
+                  $i=0;
+                    
+                  while($row = $result->fetch_assoc())
+                  {
+                      echo "<tr><td style='width: 100px;'>".$row['data']."</td><td style='width: 100px;'>".$row['ora']."</td><td style='width: 100px;'>".$row['id']."</td><td style='width: 100px;'><form><input type='hidden' name='valore' value='$i'><button class='btn btn-primary my-btn dark' name='visualizza'>Visualizza</button></form></td></tr>";
+                      
+                      $i++;
+                  }
+                  echo "</table></div></div></div></div>";
+                
+                  $result->close();
+              }
+              else
+              {
+                  echo "<div class='overlay' style='background-color:white'><div class='container' style='text-align:center;'><h3>Percorsi precedenti</h3><br>Non sono presenti percorsi precedentemente inseriti.</div></div>";
+              }
+              $connection->close();
+          }
+                                     
+          ?>
       </div>
   
       <div id="tf-contact">
