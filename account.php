@@ -59,7 +59,14 @@ session_start();
             
             function Up()
             {
-                var div = document.getElementById("div").innerHTML= "<p>ccc</p>";
+                var xhttp = new XMLHttpRequest();
+                xhttp.open("GET", "ultimopercorso.php", true);
+                xhttp.onreadystatechange = function()
+                {
+                    var div = document.getElementById("div").innerHTML= this.response;
+                }
+                
+                xhttp.send(); 
             }
             
             function CU()
@@ -179,13 +186,13 @@ session_start();
                                     
                                     </button></li></ul>
                                 <ul><li><button type="button" style="width:210px" name="Impostazioni" class="btn btn-primary my-btn dark" id="impostazioni" onclick="impostazioni()">Impostazioni</button></li></ul>
-                                <ul><li><button type="button" style="width:210px" name="UltimiPercorsi" class="btn btn-primary my-btn dark" id="Up" onclick="Up()">Ultimi percorsi</button></li></ul>
+                                <ul><li><button type="button" style="width:210px" name="UltimiPercorsi" class="btn btn-primary my-btn dark" id="Up" onclick="Up()">Ultimo percorso</button></li></ul>
                                 <ul><li><form action="registrazione.php" method="post"><button type="submit" style="width:210px" name="Esci" class="btn btn-primary my-btn dark">Esci</button></form></li></ul>
                             </nav>
                             <div style="margin-left:300px; border-left: thick solid #000; color: #000; width:750px; height:440px;" id="div">
-                                <button type="button" style="width:210px; margin:50px;" name="UltimiPercorsi" class="btn btn-primary my-btn dark" onclick="CU()">Cambia Username</button><br>
-                                <button type="button" style="width:210px; margin:50px;" name="UltimiPercorsi" class="btn btn-primary my-btn dark" onclick="CP()">Cambia Password</button><br>
-                                <button type="button" style="width:210px; margin:50px;" name="UltimiPercorsi" class="btn btn-primary my-btn dark" onclick="CE()">Cambia Email</button>
+                                <button type="button" style="width:210px; margin:50px;" name="cambiausername" class="btn btn-primary my-btn dark" onclick="CU()">Cambia Username</button><br>
+                                <button type="button" style="width:210px; margin:50px;" name="cambiapassword" class="btn btn-primary my-btn dark" onclick="CP()">Cambia Password</button><br>
+                                <button type="button" style="width:210px; margin:50px;" name="cambiaemail" class="btn btn-primary my-btn dark" onclick="CE()">Cambia Email</button>
                             </div>
                         </div>
                     </div>

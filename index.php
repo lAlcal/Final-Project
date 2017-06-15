@@ -22,8 +22,6 @@ if(isset($_SESSION['username']) AND isset($_SESSION['password']))
         {
             array_push($punti -> arraypunti, array("lat"=>$row['latitudine'],"lng"=>$row['longitudine']));
         }
-        
-        setcookie('stringa', json_encode($punti));
     }
 }
 
@@ -31,6 +29,23 @@ if(isset($_SESSION['username']) AND isset($_SESSION['password']))
 if(isset($_POST['visualizzaPunto']))
 {
     $valore=$_POST['valore'];
+    $connection=new mysqli("localhost","root","","prova");
+   
+                      
+    $result=$connection->query("SELECT latitudine,longitudine FROM punti WHERE id=$valore AND username='".$_SESSION['username']."'");
+    if($result)
+    {
+        /*var cookiestring=RegExp(\"stringa[^;]+\").exec(document.cookie);
+        var stringa = unescape(!!cookiestring ? cookiestring.toString().replace(/^[^=]+./,\"\") : \"\");*/
+        $punti = new stdClass();
+        $punti -> arraypunti = array();
+        while($row = $result->fetch_assoc())
+        {
+            array_push($punti -> arraypunti, array("lat"=>$row['latitudine'],"lng"=>$row['longitudine']));
+        }
+        
+        $result->close();
+     }   
 }
 
 if(isset($_POST['visualizzaPercorso']))
@@ -300,7 +315,6 @@ if(isset($_POST['invio']))
                               echo "<div id='map' style='width:100%;height:500px'></div>
                                     <script>
                                     var stringa = $supporto;
-                                    console.log(stringa);
                                     stringa = JSON.parse(stringa);
                                     
                                     function myMap() 
@@ -320,12 +334,23 @@ if(isset($_POST['invio']))
                                             var latlng = new google.maps.LatLng(stringa.arraypunti[i].lat, stringa.arraypunti[i].lng);
                                             punti.push(latlng);
                                          }
-                                         var snappedPolyline = new google.maps.Polyline({
-                                         path: punti,
-                                         strokeColor: 'black',
-                                         strokeOpacity: 1.0,
-                                         strokeWeight: 3});
-                                         snappedPolyline.setMap(map);
+                                         if(punti.length==1)
+                                         {
+                                            var marker = new google.maps.Marker({
+                                            position: latlng,
+                                            map: map,
+                                            title: 'Marker!'});
+                                            marker.setMap(map);
+                                         }
+                                         else
+                                         {
+                                            var snappedPolyline = new google.maps.Polyline({
+                                            path: punti,
+                                            strokeColor: 'black',
+                                            strokeOpacity: 1.0,
+                                            strokeWeight: 3});
+                                            snappedPolyline.setMap(map);
+                                         }
                                      }
                                      </script>
                                      <script src=\"https://maps.googleapis.com/maps/api/js?key=AIzaSyB0eUzC_no58hHDQ2rf2QIYDZOcWXflmAk&callback=myMap\"></script>";
@@ -370,7 +395,7 @@ if(isset($_POST['invio']))
                               echo "<div id='table-wrapper'><div id='table-scroll'><table style='text-align:left'><tr><th style='width: 100px;'>Data</th><th style='width: 100px;'>Ora</th><th style='width: 100px;'>Latitudine</th><th style='width: 100px;'>Longitudine</th><th style='width: 100px;'>N° satelliti</th><th style='width: 100px;'>Precisione</th><th style='width: 100px;'>Velocità km/h</th></tr>";
                               while($row = $result->fetch_assoc())
                               {
-                                  echo "<tr><td style='width: 100px;'>".$row['data']."</td><td style='width: 100px;'>".$row['ora']."</td><td style='width: 100px;'>".$row['latitudine']."</td><td style='width: 100px;'>".$row['longitudine']."</td><td style='width: 100px;'>".$row['satelliti']."</td><td style='width: 100px;'>".$row['precisione']."</td><td style='width: 100px;'>".$row['velocita']."</td><td style='width: 100px;'><form action='index.php' method='post'><input type='hidden' name='valore' value='".$row['idp']."'><button class='btn btn-primary my-btn dark' name='visualizzaPunto'>Visualizza</button></form></td></tr>";
+                                  echo "<tr><td style='width: 100px;'>".$row['data']."</td><td style='width: 100px;'>".$row['ora']."</td><td style='width: 100px;'>".$row['latitudine']."</td><td style='width: 100px;'>".$row['longitudine']."</td><td style='width: 100px;'>".$row['satelliti']."</td><td style='width: 100px;'>".$row['precisione']."</td><td style='width: 100px;'>".$row['velocita']."</td><td style='width: 100px;'><form action='index.php' method='post'><input type='hidden' name='valore' value='".$row['id']."'><button class='btn btn-primary my-btn dark' name='visualizzaPunto'>Visualizza</button></form></td></tr>";
                               }
                               echo "</table></div></div>";
                               $result->close();
