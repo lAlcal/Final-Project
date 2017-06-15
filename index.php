@@ -1,5 +1,56 @@
 <?php
 session_start();
+
+if(isset($_SESSION['username']) AND isset($_SESSION['password']))
+{
+    $connection=new mysqli("localhost","root","","prova");
+    $result=$connection->query("SELECT Max(id) AS var FROM percorsi WHERE username='".$_SESSION['username']."'");
+    if($result)
+    {
+        while($row = $result->fetch_assoc())
+        {
+            $id = $row['var'];
+        }
+        $result->close();
+    }
+    $result=$connection->query("SELECT * FROM punti WHERE idp=$id AND username='".$_SESSION['username']."'");
+    if($result)
+    {
+        $punti = new stdClass();
+        $punti -> arraypunti = array();
+        while($row = $result->fetch_assoc())
+        {
+            array_push($punti -> arraypunti, array("lat"=>$row['latitudine'],"lng"=>$row['longitudine']));
+        }
+        
+        setcookie('stringa', json_encode($punti));
+    }
+}
+
+
+if(isset($_POST['visualizzaPunto']))
+{
+    $valore=$_POST['valore'];
+}
+
+if(isset($_POST['visualizzaPercorso']))
+{
+    $valore = $_POST['valore'];
+    $connection=new mysqli("localhost","root","","prova");  
+    $result=$connection->query("SELECT punti.latitudine, punti.longitudine FROM punti INNER JOIN percorsi ON percorsi.id=punti.idp WHERE percorsi.id='".$valore."' AND punti.username='".$_SESSION['username']."';");
+    if($result->num_rows>0)
+    {
+        $punti = new stdClass();
+        $punti -> arraypunti = array();
+        while($row = $result->fetch_assoc())
+        {
+            array_push($punti -> arraypunti, array("lat"=>$row['latitudine'],"lng"=>$row['longitudine']));
+        }
+        setcookie('stringa', json_encode($punti));
+        $result->close();
+    }
+}
+
 if(isset($_POST['invio']))
 {
     $connection=new mysqli("localhost","root","","prova");
@@ -227,42 +278,67 @@ if(isset($_POST['invio']))
               }
               else
               {
-              ?>
-              <div id="map" style="width:100%;height:500px"></div>
-              <script>
-                  var cookiestring=RegExp("stringa[^;]+").exec(document.cookie);
-                  var stringa = unescape(!!cookiestring ? cookiestring.toString().replace(/^[^=]+./,"") : "");
-                  stringa = JSON.parse(stringa);
-                  
-                  function myMap() 
+                  $connection=new mysqli("localhost","root","","prova");
+                  $result=$connection->query("SELECT DISTINCT * FROM percorsi WHERE username='".$_SESSION['username']."';");
+                  if($result->num_rows>0)
                   {
-                      var myCenter = new google.maps.LatLng(stringa.arraypunti[0].lat, stringa.arraypunti[0].lng);
-                      var mapCanvas = document.getElementById("map");
-                      var mapOptions = {center: myCenter, zoom:15};
-                      var map = new google.maps.Map(mapCanvas, mapOptions);
-                      request(map);
-                  }
-                  
-                  function request(map)
-                  {
-                      var punti = [];
-                      for(var i = 0; i<stringa.arraypunti.length; i++)
+                      $result=$connection->query("SELECT Max(id) AS var FROM percorsi WHERE username='".$_SESSION['username']."'");
+                      if($result)
                       {
-                          var latlng = new google.maps.LatLng(stringa.arraypunti[i].lat, stringa.arraypunti[i].lng);
-                          punti.push(latlng);
-                      }
-                      var snappedPolyline = new google.maps.Polyline({
-                          path: punti,
-                          strokeColor: 'black',
-                          strokeOpacity: 1.0,
-                          strokeWeight: 3
-                      });
-                      snappedPolyline.setMap(map);
+                          while($row = $result->fetch_assoc())
+                          {
+                              $id = $row['var'];
+                          }
+                          $result->close();
+                          
+                          $result=$connection->query("SELECT * FROM punti WHERE idp=$id AND username='".$_SESSION['username']."'");
+                          if($result)
+                          {
+                              /*var cookiestring=RegExp(\"stringa[^;]+\").exec(document.cookie);
+                                    var stringa = unescape(!!cookiestring ? cookiestring.toString().replace(/^[^=]+./,\"\") : \"\");*/
+                              $supporto = json_encode($punti);
+                              echo "<div id='map' style='width:100%;height:500px'></div>
+                                    <script>
+                                    var stringa = $supporto;
+                                    console.log(stringa);
+                                    stringa = JSON.parse(stringa);
+                                    
+                                    function myMap() 
+                                    {
+                                        var myCenter = new google.maps.LatLng(stringa.arraypunti[0].lat, stringa.arraypunti[0].lng);
+                                        var mapCanvas = document.getElementById(\"map\");
+                                        var mapOptions = {center: myCenter, zoom:15};
+                                        var map = new google.maps.Map(mapCanvas, mapOptions);
+                                        request(map);
+                                     }
+                                        
+                                     function request(map)
+                                     {
+                                         var punti = [];
+                                         for(var i = 0; i<stringa.arraypunti.length; i++)
+                                         {
+                                            var latlng = new google.maps.LatLng(stringa.arraypunti[i].lat, stringa.arraypunti[i].lng);
+                                            punti.push(latlng);
+                                         }
+                                         var snappedPolyline = new google.maps.Polyline({
+                                         path: punti,
+                                         strokeColor: 'black',
+                                         strokeOpacity: 1.0,
+                                         strokeWeight: 3});
+                                         snappedPolyline.setMap(map);
+                                     }
+                                     </script>
+                                     <script src=\"https://maps.googleapis.com/maps/api/js?key=AIzaSyB0eUzC_no58hHDQ2rf2QIYDZOcWXflmAk&callback=myMap\"></script>";
+                              $result->close();
+                          }   
+                      }  
                   }
-              </script>
-              <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB0eUzC_no58hHDQ2rf2QIYDZOcWXflmAk&callback=myMap"></script>
-              <?php
+                  else
+                  {
+                      echo "Non è presente un percorso precedentemente inserito.";
+                  }    
               }
+                  
               ?>
           </div>
       </div>
@@ -280,7 +356,7 @@ if(isset($_POST['invio']))
                       echo "<h3>Punti precedenti</h3>";
                       $connection=new mysqli("localhost","root","","prova");
     
-                      $result=$connection->query("SELECT Max(id) AS var FROM percorsi");
+                      $result=$connection->query("SELECT Max(id) AS var FROM percorsi WHERE username='".$_SESSION['username']."'");
                       if($result)
                       {
                           while($row = $result->fetch_assoc())
@@ -288,16 +364,13 @@ if(isset($_POST['invio']))
                               $id = $row['var'];
                           }
                           $result->close();
-                          
-                          $result=$connection->query("SELECT * FROM punti WHERE idp<$id AND username=0'".$_SESSION['username']."'");
+                          $result=$connection->query("SELECT * FROM punti WHERE idp=$id AND username='".$_SESSION['username']."'");
                           if($result)
                           {
                               echo "<div id='table-wrapper'><div id='table-scroll'><table style='text-align:left'><tr><th style='width: 100px;'>Data</th><th style='width: 100px;'>Ora</th><th style='width: 100px;'>Latitudine</th><th style='width: 100px;'>Longitudine</th><th style='width: 100px;'>N° satelliti</th><th style='width: 100px;'>Precisione</th><th style='width: 100px;'>Velocità km/h</th></tr>";
-                              $i=0;
                               while($row = $result->fetch_assoc())
                               {
-                                  echo "<tr><td style='width: 100px;'>".$row['data']."</td><td style='width: 100px;'>".$row['ora']."</td><td style='width: 100px;'>".$row['latitudine']."</td><td style='width: 100px;'>".$row['longitudine']."</td><td style='width: 100px;'>".$row['satelliti']."</td><td style='width: 100px;'>".$row['precisione']."</td><td style='width: 100px;'>".$row['velocita']."</td><td style='width: 100px;'><form><input type='hidden' name='valore' value='$i'><button class='btn btn-primary my-btn dark' name='visualizza'>Visualizza</button></form></td></tr>";
-                                  $i++;
+                                  echo "<tr><td style='width: 100px;'>".$row['data']."</td><td style='width: 100px;'>".$row['ora']."</td><td style='width: 100px;'>".$row['latitudine']."</td><td style='width: 100px;'>".$row['longitudine']."</td><td style='width: 100px;'>".$row['satelliti']."</td><td style='width: 100px;'>".$row['precisione']."</td><td style='width: 100px;'>".$row['velocita']."</td><td style='width: 100px;'><form action='index.php' method='post'><input type='hidden' name='valore' value='".$row['idp']."'><button class='btn btn-primary my-btn dark' name='visualizzaPunto'>Visualizza</button></form></td></tr>";
                               }
                               echo "</table></div></div>";
                               $result->close();
@@ -329,18 +402,13 @@ if(isset($_POST['invio']))
           else
           {
               $connection=new mysqli("localhost","root","","prova");  
-              $result=$connection->query("SELECT DISTINCT percorsi.id, punti. data, punti.ora, punti.username FROM percorsi INNER JOIN punti ON percorsi.id=punti.idp WHERE punti.username='".$_SESSION['username']."';");
+              $result=$connection->query("SELECT DISTINCT percorsi.id, punti.data, punti.ora, punti.username FROM percorsi INNER JOIN punti ON percorsi.id=punti.idp WHERE punti.username='".$_SESSION['username']."';");
               if($result->num_rows>0)
               {
-                  echo "<div class='overlay' style='background-color:white'><div class='container' style='text-align:center;'><h3>Percorsi precedenti</h3><div id='table-wrapper'><div id='table-scroll'><table style='text-align:left'><tr><th style='width: 100px;'>Data</th><th style='width: 100px;'>Ora</th><th style='width: 100px;'>ID</th</tr>";
-                  
-                  $i=0;
-                    
+                  echo "<div class='overlay' style='background-color:white; text-align:center;'><div class='container' style='text-align:center;'><h3>Percorsi precedenti</h3><div id='table-wrapper'><div id='table-scroll'><table style='text-align:left'><tr><th style='width: 210px;'>Data</th><th style='width: 210px;'>Ora</th><th style='width: 210px;'>ID</th</tr>";
                   while($row = $result->fetch_assoc())
                   {
-                      echo "<tr><td style='width: 100px;'>".$row['data']."</td><td style='width: 100px;'>".$row['ora']."</td><td style='width: 100px;'>".$row['id']."</td><td style='width: 100px;'><form><input type='hidden' name='valore' value='$i'><button class='btn btn-primary my-btn dark' name='visualizza'>Visualizza</button></form></td></tr>";
-                      
-                      $i++;
+                      echo "<tr><td style='width: 100px;'>".$row['data']."</td><td style='width: 100px;'>".$row['ora']."</td><td style='width: 100px;'>".$row['id']."</td><td style='width: 100px;'><form action='index.php' method='post'><input type='hidden' name='valore' value='".$row['id']."'><button class='btn btn-primary my-btn dark' name='visualizzaPercorso'>Visualizza</button></form></td></tr>";
                   }
                   echo "</table></div></div></div></div>";
                 
